@@ -136,3 +136,4 @@ Generate a commit message following ALL the above rules."""
             
         except Exception as e:
             return f"Error generating commit message: {str(e)}"
+

@@ -92,3 +92,4 @@ def commit(repo_path: str, api_key: str, model: str, max_tokens: int):
 
 if __name__ == "__main__":
     cli()
+
