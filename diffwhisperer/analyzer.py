@@ -84,12 +84,14 @@ class DiffAnalyzer:
         
         return staged_files
 
-    def generate_commit_message(self, max_tokens: int = 300) -> str:
+    def generate_commit_message(self, max_tokens: int = 800) -> str:
         """
         Generate a meaningful git commit message based on staged changes.
         
         Args:
-            max_tokens: Maximum number of tokens in the generated message
+            max_tokens: Maximum number of tokens in the generated message.
+                       Default is 800 to ensure full commit messages aren't truncated.
+                       Gemini models typically support up to 2048 tokens output.
             
         Returns:
             str: Generated commit message with title and detailed explanation
@@ -98,6 +100,12 @@ class DiffAnalyzer:
         
         if not staged_changes:
             return "No staged changes found"
+            
+        # Ensure reasonable token limit
+        if max_tokens < 200:
+            max_tokens = 200  # Minimum to ensure complete messages
+        elif max_tokens > 2048:
+            max_tokens = 2048  # Maximum supported by Gemini
 
         # Get files being changed
         changed_files = list(staged_changes.keys())
@@ -105,18 +113,27 @@ class DiffAnalyzer:
         # Prepare a concise diff summary
         changes_text = self._prepare_diff_summary(staged_changes)
         
+        # Calculate approximate word limits based on tokens
+        approx_words = max_tokens // 4  # rough estimate of 4 tokens per word
+        body_words = approx_words - 10   # reserve ~10 words for title
+        
         prompt = f"""Analyze these changes and generate a detailed git commit message:
 {changes_text}
 
-Requirements for the commit message:
-1. Start with a clear, concise title line (50-72 chars) that summarizes WHAT changed
+Requirements for the commit message (STRICT LENGTH LIMITS):
+1. Title line:
+   - Between 50-72 characters
+   - Clear summary of WHAT changed
+   - No period at end
 2. Leave one blank line after the title
-3. Follow with 2-4 paragraphs explaining:
-   - WHY these changes were needed
-   - HOW the changes address the need
-   - Any important technical details or trade-offs
-4. Use present tense and imperative mood
-5. If relevant, include at end of body:
+3. Body (approximately {body_words} words total):
+   - 2-4 paragraphs explaining:
+     * WHY these changes were needed
+     * HOW the changes address the need
+     * Any important technical details or trade-offs
+   - Keep each paragraph under 4 lines
+   - Wrap text at 72 characters per line
+4. If needed, end with any of these (within {body_words} word limit):
    - Breaking changes
    - Related issues
    - Migration notes
@@ -150,12 +167,52 @@ Generate a commit message following ALL the above rules."""
             # Ensure proper formatting with line breaks
             parts = message.split('\n\n', 1)
             if len(parts) == 1:
-                # If only title provided, return as is
+                # Request wasn't properly formatted, try again with more explicit formatting
+                response = self.model.generate_content(
+                    prompt + "\n\nMake sure to include both a title AND explanatory body!",
+                    generation_config=genai.types.GenerationConfig(
+                        max_output_tokens=max_tokens,
+                        temperature=0.7,
+                        top_p=0.8,
+                        top_k=40
+                    )
+                )
+                message = response.text.strip()
+                parts = message.split('\n\n', 1)
+                
+            # If we still don't have a proper message, use what we got
+            if len(parts) == 1:
                 return parts[0]
                 
             title, body = parts
-            # Ensure title and body are properly formatted
-            formatted_message = f"{title.strip()}\n\n{body.strip()}"
+            
+            # Validate title length (50-72 chars is git standard)
+            title = title.strip()
+            if len(title) > 72:
+                title = title[:69] + "..."
+                
+            # Format body with proper line wrapping (72-char git standard)
+            wrapped_body = []
+            for paragraph in body.strip().split('\n\n'):
+                lines = []
+                current_line = []
+                current_length = 0
+                
+                for word in paragraph.split():
+                    if current_length + len(word) + 1 <= 72:
+                        current_line.append(word)
+                        current_length += len(word) + 1
+                    else:
+                        lines.append(' '.join(current_line))
+                        current_line = [word]
+                        current_length = len(word)
+                
+                if current_line:
+                    lines.append(' '.join(current_line))
+                wrapped_body.append('\n'.join(lines))
+            
+            # Combine all parts with proper formatting
+            formatted_message = f"{title}\n\n{'\n\n'.join(wrapped_body)}"
             return formatted_message
             
         except Exception as e:
