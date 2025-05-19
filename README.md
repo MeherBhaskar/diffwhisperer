@@ -104,4 +104,4 @@ MIT - Feel free to use this tool in your projects!
 Made with ❤️ by the DiffWhisperer team
 
 [![PyPI version](https://badge.fury.io/py/diffwhisperer.svg)](https://badge.fury.io/py/diffwhisperer)
-[![Build Status](https://github.com/yourusername/diffwhisperer/actions/workflows/publish.yml/badge.svg)](https://github.com/yourusername/diffwhisperer/actions/workflows/publish.yml)
+[![Build Status](https://github.com/MeherBhaskar/diffwhisperer/actions/workflows/publish.yml/badge.svg)](https://github.com/MeherBhaskar/diffwhisperer/actions/workflows/publish.yml)
