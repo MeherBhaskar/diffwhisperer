@@ -1,6 +1,6 @@
 [project]
 name = "diffwhisperer"
-version = "0.1.0"
+version = "0.1.1"
 description = "An AI agent for generating meaningful git commit messages using Google's Gemini AI"
 authors = [
     {name = "GitHub Copilot"}
@@ -40,5 +40,4 @@ diffwhisperer = "diffwhisperer.cli:cli"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-build-backend = "poetry.core.masonry.api"
 

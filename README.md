@@ -23,7 +23,7 @@ pip install diffwhisperer
 
 ### Setup
 
-1. Get your free API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+1. Get your free API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
 
 2. Set your API key:
 ```bash
@@ -68,8 +68,8 @@ diffwhisperer generate --repo-path /path/to/repo
 ### Multiple Models Support
 
 - `gemini-2.0-flash`: Quick, efficient responses (default)
-- `gemini-1.5-pro`: More detailed analysis
-- More models coming soon!
+- `gemini-2.5-pro`: More detailed analysis
+- Any other Gemini supported model!
 
 ## 📝 Example Outputs
 
@@ -94,27 +94,6 @@ We welcome contributions! Here's how you can help:
 4. Commit your changes (use DiffWhisperer itself! 😉)
 5. Push to the branch (`git push origin feature/amazing-feature`)
 6. Open a Pull Request
-
-### Development Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/diffwhisperer.git
-cd diffwhisperer
-
-# Install in development mode
-pip install -e .
-```
-
-### Release Process
-
-DiffWhisperer follows semantic versioning. To create a new release:
-
-1. Update version in `pyproject.toml`
-2. Create a tag: `git tag -a v1.0.0 -m "Release v1.0.0"`
-3. Push with tags: `git push origin main --tags`
-
-The GitHub Actions workflow will automatically build and publish tagged releases to PyPI.
 
 ## 📄 License
 
