@@ -149,7 +149,8 @@ implementation details that future maintainers should know.
 Include any breaking changes, migration notes, or related
 issues at the end as trailers.
 
-Generate a commit message following ALL the above rules."""
+Generate a commit message following ALL the above rules. 
+Do NOT include any quotes around the commit message."""
 
         try:
             response = self.model.generate_content(
