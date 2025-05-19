@@ -86,7 +86,35 @@ docs(readme): update installation instructions and examples
 
 ## 🤝 Contributing
 
-We welcome contributions! Whether it's bug reports, feature requests, or code contributions, please feel free to contribute.
+We welcome contributions! Here's how you can help:
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Commit your changes (use DiffWhisperer itself! 😉)
+5. Push to the branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
+
+### Development Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/diffwhisperer.git
+cd diffwhisperer
+
+# Install in development mode
+pip install -e .
+```
+
+### Release Process
+
+DiffWhisperer follows semantic versioning. To create a new release:
+
+1. Update version in `pyproject.toml`
+2. Create a tag: `git tag -a v1.0.0 -m "Release v1.0.0"`
+3. Push with tags: `git push origin main --tags`
+
+The GitHub Actions workflow will automatically build and publish tagged releases to PyPI.
 
 ## 📄 License
 
@@ -95,3 +123,6 @@ MIT - Feel free to use this tool in your projects!
 ---
 
 Made with ❤️ by the DiffWhisperer team
+
+[![PyPI version](https://badge.fury.io/py/diffwhisperer.svg)](https://badge.fury.io/py/diffwhisperer)
+[![Build Status](https://github.com/yourusername/diffwhisperer/actions/workflows/publish.yml/badge.svg)](https://github.com/yourusername/diffwhisperer/actions/workflows/publish.yml)
