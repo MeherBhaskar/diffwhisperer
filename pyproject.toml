@@ -1,0 +1,22 @@
+[project]
+name = "diffwhisperer"
+version = "0.1.0"
+description = "An AI agent for generating meaningful git commit messages"
+authors = [
+    {name = "GitHub Copilot"}
+]
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "google-generativeai>=0.3.0",
+    "gitpython>=3.1.44",
+    "click>=8.0.0"
+]
+
+[project.scripts]
+diffwhisperer = "diffwhisperer.cli:cli"
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
