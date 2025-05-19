@@ -84,42 +84,53 @@ class DiffAnalyzer:
         
         return staged_files
 
-    def generate_commit_message(self, max_tokens: int = 100) -> str:
+    def generate_commit_message(self, max_tokens: int = 300) -> str:
         """
-        Generate a commit message based on staged changes.
+        Generate a meaningful git commit message based on staged changes.
         
         Args:
             max_tokens: Maximum number of tokens in the generated message
             
         Returns:
-            str: Generated commit message
+            str: Generated commit message with title and detailed explanation
         """
         staged_changes = self.get_staged_changes()
         
         if not staged_changes:
             return "No staged changes found"
 
-        # Get files being changed to determine scope
+        # Get files being changed
         changed_files = list(staged_changes.keys())
-        primary_scope = self._determine_scope(changed_files)
         
         # Prepare a concise diff summary
         changes_text = self._prepare_diff_summary(staged_changes)
-
-        # Calculate target length intelligently based on complexity of changes
-        target_words = min(max_tokens // 4, 20)  # Cap at 20 words for readability
         
-        prompt = f"""Generate a git commit message for these changes:
+        prompt = f"""Analyze these changes and generate a detailed git commit message:
 {changes_text}
 
-Requirements (MUST follow ALL):
-1. Format: <type>({primary_scope}): <description>
-   - Type: feat|fix|docs|style|refactor|perf|test|build|ci|chore
-   - Description: present tense, not capitalized, no period
-2. Keep under {target_words} words and {max_tokens} tokens
-3. Be specific but concise about WHAT changed
-4. Use imperative mood ("add" not "adds")
-5. If breaking change, prefix with "BREAKING CHANGE:"
+Requirements for the commit message:
+1. Start with a clear, concise title line (50-72 chars) that summarizes WHAT changed
+2. Leave one blank line after the title
+3. Follow with 2-4 paragraphs explaining:
+   - WHY these changes were needed
+   - HOW the changes address the need
+   - Any important technical details or trade-offs
+4. Use present tense and imperative mood
+5. If relevant, include at end of body:
+   - Breaking changes
+   - Related issues
+   - Migration notes
+   - Credit to contributors
+
+Example format:
+Title summarizing the change
+
+Explain why this change was needed and what problem it solves.
+Provide context about the approach taken and any important
+implementation details that future maintainers should know.
+
+Include any breaking changes, migration notes, or related
+issues at the end as trailers.
 
 Generate a commit message following ALL the above rules."""
 
@@ -128,11 +139,24 @@ Generate a commit message following ALL the above rules."""
                 prompt,
                 generation_config=genai.types.GenerationConfig(
                     max_output_tokens=max_tokens,
-                    temperature=0.7
+                    temperature=0.7,
+                    top_p=0.8,  # More focused output
+                    top_k=40    # Better vocabulary diversity
                 )
             )
             
-            return response.text.strip()
+            message = response.text.strip()
+            
+            # Ensure proper formatting with line breaks
+            parts = message.split('\n\n', 1)
+            if len(parts) == 1:
+                # If only title provided, return as is
+                return parts[0]
+                
+            title, body = parts
+            # Ensure title and body are properly formatted
+            formatted_message = f"{title.strip()}\n\n{body.strip()}"
+            return formatted_message
             
         except Exception as e:
             return f"Error generating commit message: {str(e)}"
