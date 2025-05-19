@@ -1,6 +1,6 @@
 [project]
 name = "diffwhisperer"
-version = "0.1.2"
+version = "1.0.0"
 description = "An AI agent for generating meaningful git commit messages using Google's Gemini AI"
 authors = [
     {name = "GitHub Copilot"}
@@ -10,7 +10,7 @@ requires-python = ">=3.9"
 license = {text = "MIT"}
 keywords = ["git", "commit", "ai", "gemini", "conventional-commits", "cli"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
