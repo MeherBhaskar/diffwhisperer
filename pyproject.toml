@@ -3,7 +3,7 @@ name = "diffwhisperer"
 version = "1.0.0"
 description = "An AI agent for generating meaningful git commit messages using Google's Gemini AI"
 authors = [
-    {name = "GitHub Copilot"}
+    {name = "Meher Bhaskar"}
 ]
 readme = "README.md"
 requires-python = ">=3.9"
